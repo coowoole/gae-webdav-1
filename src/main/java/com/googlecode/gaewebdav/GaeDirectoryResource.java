@@ -3,7 +3,7 @@ package com.googlecode.gaewebdav;
 import com.bradmcevoy.http.*;
 import com.bradmcevoy.http.exceptions.ConflictException;
 import com.bradmcevoy.http.exceptions.NotAuthorizedException;
-import com.newatlanta.commons.vfs.provider.gae.GaeVFS;
+import com.newatlanta.appengine.vfs.provider.GaeVFS;
 import eu.medsea.mimeutil.MimeType;
 import eu.medsea.mimeutil.MimeUtil;
 import org.apache.commons.vfs.*;

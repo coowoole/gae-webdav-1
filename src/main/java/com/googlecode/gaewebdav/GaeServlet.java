@@ -1,7 +1,7 @@
 package com.googlecode.gaewebdav;
 
 import com.bradmcevoy.http.MiltonServlet;
-import com.newatlanta.commons.vfs.provider.gae.GaeVFS;
+import com.newatlanta.appengine.vfs.provider.GaeVFS;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,24 +16,32 @@ import java.io.IOException;
 public class GaeServlet extends MiltonServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
+/*
         try {
-            GaeVFS.setRootPath(config.getServletContext().getRealPath("/"));
+            GaeVFS.getManager().setRootPath(config.getServletContext().getRealPath("/"));
+*/
             super.init(config);
+/*
         } catch (Exception e) {
             throw new ServletException(e);
         } finally {
             GaeVFS.clearFilesCache();
         }
+*/
     }
 
     @Override
     public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+/*
         try {
+*/
             super.service(servletRequest, servletResponse);
+/*
         } catch (IOException e) {
             throw new ServletException(e);
         } finally {
             GaeVFS.clearFilesCache();
         }
+*/
     }
 }

@@ -65,7 +65,7 @@
         <dependency>
             <groupId>net.tetromi</groupId>
             <artifactId>gae-vfs</artifactId>
-            <version>0.3-SNAPSHOT</version>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

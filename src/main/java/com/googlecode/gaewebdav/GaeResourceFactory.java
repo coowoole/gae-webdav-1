@@ -1,7 +1,7 @@
 package com.googlecode.gaewebdav;
 
 import com.bradmcevoy.http.*;
-import com.newatlanta.commons.vfs.provider.gae.GaeVFS;
+import com.newatlanta.appengine.vfs.provider.GaeVFS;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;

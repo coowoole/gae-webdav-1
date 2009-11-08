@@ -4,7 +4,7 @@ import com.bradmcevoy.http.DefaultResponseHandler;
 import com.bradmcevoy.http.ResourceFactory;
 import com.bradmcevoy.http.ResourceFactoryFactory;
 import com.bradmcevoy.http.ResponseHandler;
-import com.newatlanta.commons.vfs.provider.gae.GaeVFS;
+import com.newatlanta.appengine.vfs.provider.GaeVFS;
 import org.apache.commons.vfs.FileSystemException;
 
 /**
