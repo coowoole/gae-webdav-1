@@ -19,8 +19,16 @@ public class GaeResourceFactoryFactory implements ResourceFactoryFactory {
 
     @Override
     public void init() {
+        GaeContext.init();
         try {
             GaeVFS.resolveFile("gae:///").createFolder();
+            try {
+                final String path = GaeVFS.getManager().getBaseFile().getName().getPathDecoded();
+                GaeContext.LOG.info("basePath="+path);
+                GaeContext.putData("basePath", path.getBytes());
+            } catch (FileSystemException e) {
+                e.printStackTrace();
+            }
         } catch (FileSystemException e) {
             e.printStackTrace();
         }

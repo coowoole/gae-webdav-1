@@ -10,13 +10,16 @@ import org.apache.commons.vfs.util.RandomAccessMode;
 import java.io.*;
 import java.util.Date;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author will
  * @date Nov 7, 2009 1:54:42 AM
  */
 public class GaeFileResource implements FileResource {
-    protected final FileObject fileObject;
+    private static final Logger log = Logger.getLogger( GaeFileResource.class.getName() );
+    
+    public final FileObject fileObject;
 
     public GaeFileResource(FileObject fileObject) {
         this.fileObject = fileObject;
@@ -30,21 +33,21 @@ public class GaeFileResource implements FileResource {
     @Override
     public void sendContent(OutputStream out, Range range, Map<String, String> params, String contentType) throws IOException, NotAuthorizedException {
         if(range != null) {
-            System.out.println("Send range content!");
+            log.info("Send range content!");
             final RandomAccessContent random = fileObject.getContent().getRandomAccessContent(RandomAccessMode.READ);
             random.seek(range.getStart());
             final InputStream input = random.getInputStream();
             ByteHelper.copy(out,input);
         } else {
             // Send the whole file
-            System.out.println("Send content! params="+params+",type="+contentType);
+            log.info("Send content! params="+params+",type="+contentType);
             final InputStream input = fileObject.getContent().getInputStream();
             try {
                 ByteHelper.copy(out,input);
                 out.close();
                 input.close();
             } catch (Exception e) {
-                System.out.println("Send ended early:"+e.getMessage());
+                log.info("Send ended early:"+e.getMessage());
                 try {
                     input.close();
                 } catch (Exception e2) {
@@ -56,11 +59,17 @@ public class GaeFileResource implements FileResource {
 
     @Override
     public void moveTo(CollectionResource rDest, String name) throws ConflictException {
-        System.out.println("moving file! dest="+rDest.getName()+",name="+name);
+        log.info("moving file! dest="+rDest.getName()+",name="+name);
         try {
-            final FileObject destFolder = GaeVFS.resolveFile(rDest.getName());
-            final FileObject destFile = destFolder.resolveFile(name);
-            fileObject.moveTo(destFile);
+            if(rDest instanceof GaeDirectoryResource) {
+                final FileObject destFile = ((GaeDirectoryResource)rDest).fileObject.resolveFile(name);
+                if(!fileObject.canRenameTo(destFile)) {
+                    throw new ConflictException(rDest.child(name));
+                }
+                fileObject.moveTo(destFile);
+            } else {
+                throw new IOException("Wrong resource type");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -95,13 +104,13 @@ public class GaeFileResource implements FileResource {
 
     @Override
     public String processForm(Map<String, String> parameters, Map<String, FileItem> files) {
-        System.out.println("process form!");
+        log.info("process form!");
         return null;
     }
 
     @Override
     public Object authenticate(String user, String password) {
-        System.out.println("authenticate!");
+        log.info("authenticate!");
         return "ok";
     }
 
@@ -117,7 +126,7 @@ public class GaeFileResource implements FileResource {
 
     @Override
     public String getRealm() {
-        System.out.println("getrealm");
+        log.info("getrealm");
         return "Google App Engine";
     }
 
@@ -139,9 +148,7 @@ public class GaeFileResource implements FileResource {
             if(!fileObject.exists()) {
                 return null;
             }
-            final String mimeType = (String) fileObject.getContent().getAttribute("mime-type");
-            System.out.println("Mime type of "+getName()+" = "+mimeType);
-            return mimeType;
+            return (String) fileObject.getContent().getAttribute("mime-type");
         } catch (Exception e) {
             e.printStackTrace();
             return "application/octet-stream";
@@ -166,10 +173,14 @@ public class GaeFileResource implements FileResource {
 
     @Override
     public void copyTo(CollectionResource toCollection, String name) {
+        log.info("copying file! dest="+toCollection.getName()+",name="+name);
         try {
-            final FileObject destFolder = GaeVFS.resolveFile(toCollection.getName());
-            final FileObject destFile = destFolder.resolveFile(name);
-            FileUtil.copyContent(fileObject,destFile);
+            if(toCollection instanceof GaeDirectoryResource) {
+                final FileObject destFile = ((GaeDirectoryResource)toCollection).fileObject.resolveFile(name);
+                FileUtil.copyContent(fileObject,destFile);
+            } else {
+                throw new IOException("Wrong resource type");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

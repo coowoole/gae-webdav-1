@@ -7,6 +7,14 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         version="2.5">
     <display-name>My Project</display-name>
+    <servlet>
+        <servlet-name>CachingDatastoreService</servlet-name>
+        <servlet-class>com.newatlanta.appengine.datastore.CachingDatastoreService</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CachingDatastoreService</servlet-name>
+        <url-pattern>/_ah/queue/write-behind-task</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>GaeWebDAVServlet</servlet-name>
@@ -20,4 +28,5 @@
         <servlet-name>GaeWebDAVServlet</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+
 </web-app>
